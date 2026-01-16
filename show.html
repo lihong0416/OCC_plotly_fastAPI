@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <title>MOBO 正面图</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    input { width: 520px; padding: 8px; }
+    .val { width: 160px; }
+    button { padding: 8px 12px; margin-left: 8px; }
+    img { border: 1px solid #ddd; width: 900px; height: 520px; object-fit: contain; background: #fafafa; display:block; margin-top: 12px; }
+    .hint { color: #666; font-size: 12px; margin-top: 8px; }
+    .row { margin-top: 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    #errBox { color:#b00020; margin-top:10px; white-space:pre-wrap; }
+    code { background:#f6f6f6; padding:2px 6px; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <h2>MOBO 正面 PNG</h2>
+
+  <div class="row">
+    <label>焊点ID：</label>
+    <input id="weldId" value="T16A-0000001298-RSW-GSMPoint.449" />
+
+    <label>封样编号：</label>
+    <input id="valueNum" class="val" value="87" placeholder="例如 87" />
+
+    <button onclick="loadImg()">加载正面图</button>
+    <button onclick="clearValue()">清空封样编号</button>
+
+    <div class="hint" style="flex-basis:100%;">
+      接口：<code>/mobo/img/weldpoint_views_base64?weld_id=...&value=...</code>
+      （value 为空则仅高亮焊点，不画标注/徽标）
+    </div>
+  </div>
+
+  <img id="imgFront" alt="front png (base64)"/>
+  <div id="errBox"></div>
+
+<script>
+  // ✅ 改成你的后端地址：同机 localhost；跨机器用服务器 IP
+  const API_BASE = "http://127.0.0.1:8010";
+
+  function setError(e) {
+    const msg = (e && e.message) ? e.message : String(e);
+    document.getElementById("errBox").textContent = msg;
+    console.error(e);
+  }
+
+  function clearError() {
+    document.getElementById("errBox").textContent = "";
+  }
+
+  function clearValue() {
+    document.getElementById("valueNum").value = "";
+    loadImg();
+  }
+
+  async function loadImg() {
+    try {
+      clearError();
+
+      const weldId = document.getElementById("weldId").value.trim();
+      const valueRaw = document.getElementById("valueNum").value.trim();
+
+      if (!weldId) {
+        setError("焊点ID不能为空");
+        return;
+      }
+
+      let url = `${API_BASE}/mobo/img/weldpoint_views_base64?weld_id=${encodeURIComponent(weldId)}`;
+
+      // ✅ value 非空才传（后端才会画红色引线+框+圆徽标）
+      if (valueRaw !== "") {
+        url += `&value=${encodeURIComponent(valueRaw)}`;
+      }
+
+      // ✅ 加时间戳防缓存（有些代理/浏览器会缓存 GET）
+      url += `&_t=${Date.now()}`;
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`请求失败：${res.status} ${res.statusText}\n${txt}`);
+      }
+
+      const data = await res.json();
+
+      // ✅ 取 base64 data_url
+      const frontUrl = data?.data?.views?.front?.data_url;
+      if (!frontUrl) {
+        throw new Error("后端返回里没有 data.data.views.front.data_url");
+      }
+
+      document.getElementById("imgFront").src = frontUrl;
+
+    } catch (e) {
+      setError(e);
+    }
+  }
+
+  // 回车刷新
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") loadImg();
+  });
+
+  // 进来先加载一次
+  loadImg();
+</script>
+</body>
+</html>
