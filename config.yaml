@@ -1,0 +1,32 @@
+server:
+  host: 0.0.0.0
+  port: 8010
+  cors_allow_origins:
+    - "*"
+
+paths:
+  # 建议保持相对项目根目录（容器里也是 /app 下）
+  step_path: "DPUB-501020596-XAX_03.002.stp"
+  glb_path: "exports_actual_catias/DPUB-501020596-XAX_03.002.glb"
+  output_dir: "exports_pv_parts"
+
+step:
+  encoding: "latin-1"
+
+glb:
+  merge_chunk: 300
+
+render:
+  view_img_size: [2200, 1400]   # 输出大图 (w,h)
+  score_img_size: [900, 600]    # 选视角打分小图 (w,h)
+  view_zoom: 1.25
+  score_zoom: 1.15
+  weld_sphere_res: 18
+  highlight_scale: 3.0
+
+style:
+  body_color: "#B8B8B8"
+  weld_normal_color: "blue"
+  weld_bad_color: "red"
+  callout_line_color: [220, 0, 0]
+  callout_line_width: 5

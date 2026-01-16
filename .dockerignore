@@ -1,0 +1,40 @@
+# VCS
+.git
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Env / IDE
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+*.swp
+
+# Notebooks / outputs
+*.ipynb
+.ipynb_checkpoints/
+exports_pv_parts/
+exports_pv/
+exports_pv_parts/**
+exports_pv/**
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
