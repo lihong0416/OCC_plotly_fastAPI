@@ -1,0 +1,20 @@
+# ===== Core (FastAPI + render) =====
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+
+numpy>=1.26.0
+pandas>=2.1.0
+
+# GLB/mesh load & processing
+trimesh[easy]>=4.0.0
+
+# off-screen rendering (PyVista depends on VTK)
+pyvista>=0.44.0
+vtk>=9.3.0
+
+# overlay text/box on PNG
+pillow>=10.2.0
+
+# ===== Optional (only used by xiaomi.py Streamlit + Plotly demo) =====
+streamlit>=1.30.0
+plotly>=5.18.0
